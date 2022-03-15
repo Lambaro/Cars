@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use GuzzleHttp\Promise\Create;
 Use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Rules\Uppercase;
+use App\Http\Requests\CreateValidationRequest;
 
 class CarsController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
 
     public function index(){
 
@@ -28,16 +33,29 @@ class CarsController extends Controller
     //Store
     public function store(Request $request)
     {
+        // methods we can use on request
+        //guessExtension() ; store() ; asStore() ; storePublicly();
+        // move(); getClientOriginalName(); getClientMimeType(); getSize();
+        // getError(); isValid();
+
         $request->validate([
-            'name' => new Uppercase(),
-            'founded' => 'required|integer|min:0|max:2021',
-            'description' => 'required'
+            'name'=> 'required',
+            'founded'=> 'required|integer|min:0|max:2021',
+            'description' => 'required',
+            'image'=> 'required|mimes:jpeg,jpg,png|max:5048',
         ]);
+        $newImageName = time(). '-' . $request->name . '.' .
+            $request->image->extension();
+
+            $request->image->move(public_path('images'), $newImageName );
+
 
         $car = Car::create([
             'name' => $request->input('name'),
             'founded' => $request->input('founded'),
             'description' => $request->input('description'),
+            'image_path' => $newImageName,
+            'user_id' => auth()->user()->id,
         ]);
        return redirect('/cars');
     }
@@ -59,8 +77,10 @@ class CarsController extends Controller
     }
 
     // Update
-    public function update(Request $request, $id)
+    public function update(CreateValidationRequest $request, $id)
     {
+        $request->validated();
+
         $car = Car::where('id', $id)->update([
             'name' => $request->input('name'),
             'founded' => $request->input('founded'),

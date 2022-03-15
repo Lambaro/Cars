@@ -4,6 +4,7 @@
 
     <div class="m-auto w-4/5 py-24">
         <div class="text-center">
+            <img class="mb-8 w-8/12 shadow-xl" src="{{asset('images/' . $car->image_path)}}" alt="car image">
             <h1 class="text-5xl uppercase bold">
                 {{$car->name}}
             </h1>
@@ -50,7 +51,7 @@
                     <p>no car models found</p>
                 @endforelse
             </table>
-            <p class="text-left">
+            <p class="text-center">
                         Product types:
                 @forelse($car->products as $product)
                     {{ $product->name }},

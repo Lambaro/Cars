@@ -8,10 +8,14 @@
     </div>
 </div>
     <div class="pt-20 flex justify-center" >
-        <form action="/cars" method="POST">
+        <form action="/cars" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="">
+            <div class="block">
+                <input type="file"
+                       class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 bg-gradient-to-r from-amber-300 to-amber-600"
+                       name="image">
+
                 <input type="text"
                 class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 bg-gradient-to-r from-amber-300 to-amber-600"
                 name="name" placeholder="Brand name..">
@@ -37,11 +41,5 @@
                     </li>
                 @endforeach
             </div>
-
         @endif
-
-
-
-
-
 @endsection
